@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Enhanced Music Lab with Composer</title>
+  <style>
+    body {
+      background-color: #121212;
+      color: #fff;
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      background-color: #1db954;
+      padding: 10px;
+      text-align: center;
+    }
+    header h1 {
+      margin: 0;
+      font-size: 24px;
+    }
+    nav {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      background-color: #222;
+      padding: 10px 0;
+    }
+    nav button {
+      background: none;
+      border: none;
+      color: #fff;
+      font-size: 16px;
+      cursor: pointer;
+      padding: 8px 16px;
+      transition: background-color 0.2s ease;
+    }
+    nav button:hover, nav button.active {
+      background-color: #1db954;
+      border-radius: 5px;
+    }
+    .content {
+      padding: 20px;
+      display: none;
+    }
+    .content.active {
+      display: block;
+    }
+    canvas {
+      display: block;
+      width: 100%;
+      height: 300px;
+      background-color: #222;
+      border: 2px solid #444;
+      border-radius: 8px;
+      margin: 0 auto 20px auto;
+    }
+    .controls {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+    .controls button, .controls input {
+      padding: 10px 20px;
+      font-size: 16px;
+      border: none;
+      border-radius: 5px;
+    }
+    .controls button {
+      background-color: #1db954;
+      color: #fff;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+    }
+    .controls button:hover {
+      background-color: #17a44c;
+    }
+    .controls input[type="range"] {
+      width: 200px;
+    }
+    /* Composer Styles */
+    #composer input[type="number"] {
+      width: 80px;
+      padding: 5px;
+      font-size: 16px;
+      border-radius: 3px;
+      border: 1px solid #444;
+      background-color: #222;
+      color: #fff;
+    }
+    #composer button {
+      background-color: #1db954;
+      color: #fff;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+    }
+    #composer button:hover {
+      background-color: #17a44c;
+    }
+    #noteList {
+      margin-top: 20px;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+      text-align: left;
+    }
+    #noteList table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    #noteList th, #noteList td {
+      padding: 8px;
+      border: 1px solid #444;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Enhanced Music Lab</h1>
+  </header>
+  <nav>
+    <button id="menuSynth" class="active">Synthesizer</button>
+    <button id="menuDrum">Drum Machine</button>
+    <button id="menuComposer">Composer</button>
+  </nav>
+  
+  <!-- Synthesizer Section -->
+  <div id="synth" class="content active">
+    <canvas id="visualizer"></canvas>
+    <div class="controls">
+      <button id="togglePlay">Play</button>
+      <label for="freqSlider">Frequency:</label>
+      <input type="range" id="freqSlider" min="100" max="1000" value="440" />
+    </div>
+  </div>
+  
+  <!-- Drum Machine Section -->
+  <div id="drum" class="content">
+    <div class="controls">
+      <button id="kick">Kick</button>
+      <button id="snare">Snare</button>
+    </div>
+  </div>
+  
+  <!-- Composer Section -->
+  <div id="composer" class="content">
+    <h2>Composer</h2>
+    <div class="controls">
+      <label for="noteFreq">Note Frequency (Hz):</label>
+      <input type="number" id="noteFreq" value="440" min="50" max="2000" />
+      <label for="noteDuration">Duration (sec):</label>
+      <input type="number" id="noteDuration" value="0.5" step="0.1" min="0.1" max="5" />
+      <button id="addNote">Add Note</button>
+    </div>
+    <div class="controls" style="margin-top:20px;">
+      <button id="playComposition">Play Composition</button>
+      <button id="saveComposition">Save Composition</button>
+      <button id="loadComposition">Load Composition</button>
+      <input type="file" id="fileInput" accept=".r45" style="display:none;" />
+    </div>
+    <div id="noteList">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Frequency (Hz)</th>
+            <th>Duration (sec)</th>
+          </tr>
+        </thead>
+        <tbody id="noteTableBody"></tbody>
+      </table>
+    </div>
+  </div>
+  
+  <script>
+    // ----------------------------
+    // Tab/Section Switching
+    // ----------------------------
+    const menuSynth = document.getElementById("menuSynth");
+    const menuDrum = document.getElementById("menuDrum");
+    const menuComposer = document.getElementById("menuComposer");
+    const synthSection = document.getElementById("synth");
+    const drumSection = document.getElementById("drum");
+    const composerSection = document.getElementById("composer");
+
+    menuSynth.addEventListener("click", () => {
+      menuSynth.classList.add("active");
+      menuDrum.classList.remove("active");
+      menuComposer.classList.remove("active");
+      synthSection.classList.add("active");
+      drumSection.classList.remove("active");
+      composerSection.classList.remove("active");
+    });
+    menuDrum.addEventListener("click", () => {
+      menuDrum.classList.add("active");
+      menuSynth.classList.remove("active");
+      menuComposer.classList.remove("active");
+      drumSection.classList.add("active");
+      synthSection.classList.remove("active");
+      composerSection.classList.remove("active");
+    });
+    menuComposer.addEventListener("click", () => {
+      menuComposer.classList.add("active");
+      menuSynth.classList.remove("active");
+      menuDrum.classList.remove("active");
+      composerSection.classList.add("active");
+      synthSection.classList.remove("active");
+      drumSection.classList.remove("active");
+    });
+
+    // ----------------------------
+    // Web Audio API Setup
+    // ----------------------------
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+    // ----------------------------
+    // Synthesizer Module
+    // ----------------------------
+    let oscillator, gainNode;
+    let isPlaying = false;
+    const analyser = audioCtx.createAnalyser();
+    analyser.fftSize = 2048;
+    const bufferLength = analyser.fftSize;
+    const dataArray = new Uint8Array(bufferLength);
+
+    const canvas = document.getElementById("visualizer");
+    const canvasCtx = canvas.getContext("2d");
+    canvas.width = canvas.offsetWidth;
+    canvas.height = canvas.offsetHeight;
+
+    function draw() {
+      requestAnimationFrame(draw);
+      analyser.getByteTimeDomainData(dataArray);
+      canvasCtx.fillStyle = "#222";
+      canvasCtx.fillRect(0, 0, canvas.width, canvas.height);
+      canvasCtx.lineWidth = 2;
+      canvasCtx.strokeStyle = "#1db954";
+      canvasCtx.beginPath();
+      const sliceWidth = canvas.width / bufferLength;
+      let x = 0;
+      for (let i = 0; i < bufferLength; i++) {
+        const v = dataArray[i] / 128.0;
+        const y = v * canvas.height / 2;
+        if (i === 0) {
+          canvasCtx.moveTo(x, y);
+        } else {
+          canvasCtx.lineTo(x, y);
+        }
+        x += sliceWidth;
+      }
+      canvasCtx.lineTo(canvas.width, canvas.height / 2);
+      canvasCtx.stroke();
+    }
+    draw();
+
+    const togglePlayBtn = document.getElementById("togglePlay");
+    const freqSlider = document.getElementById("freqSlider");
+
+    togglePlayBtn.addEventListener("click", () => {
+      if (!isPlaying) {
+        startSound();
+        togglePlayBtn.textContent = "Stop";
+      } else {
+        stopSound();
+        togglePlayBtn.textContent = "Play";
+      }
+      isPlaying = !isPlaying;
+    });
+
+    freqSlider.addEventListener("input", () => {
+      if (oscillator) {
+        oscillator.frequency.setValueAtTime(freqSlider.value, audioCtx.currentTime);
+      }
+    });
+
+    function startSound() {
+      oscillator = audioCtx.createOscillator();
+      gainNode = audioCtx.createGain();
+      oscillator.type = "sine";
+      oscillator.frequency.setValueAtTime(freqSlider.value, audioCtx.currentTime);
+      oscillator.connect(gainNode);
+      gainNode.connect(analyser);
+      analyser.connect(audioCtx.destination);
+      gainNode.gain.setValueAtTime(0.2, audioCtx.currentTime);
+      oscillator.start();
+    }
+
+    function stopSound() {
+      if (oscillator) {
+        oscillator.stop();
+        oscillator.disconnect();
+        gainNode.disconnect();
+        oscillator = null;
+      }
+    }
+
+    // ----------------------------
+    // Drum Machine Module
+    // ----------------------------
+    const kickBtn = document.getElementById("kick");
+    const snareBtn = document.getElementById("snare");
+
+    kickBtn.addEventListener("click", playKick);
+    snareBtn.addEventListener("click", playSnare);
+
+    function playKick() {
+      let osc = audioCtx.createOscillator();
+      let gain = audioCtx.createGain();
+      osc.type = "sine";
+      osc.frequency.setValueAtTime(150, audioCtx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.5);
+      gain.gain.setValueAtTime(1, audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.5);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start();
+      osc.stop(audioCtx.currentTime + 0.5);
+    }
+
+    function playSnare() {
+      const bufferSize = audioCtx.sampleRate * 0.2;
+      const noiseBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+      const output = noiseBuffer.getChannelData(0);
+      for (let i = 0; i < bufferSize; i++) {
+        output[i] = Math.random() * 2 - 1;
+      }
+      let noise = audioCtx.createBufferSource();
+      noise.buffer = noiseBuffer;
+      let noiseFilter = audioCtx.createBiquadFilter();
+      noiseFilter.type = "highpass";
+      noiseFilter.frequency.value = 1000;
+      noise.connect(noiseFilter);
+      let gain = audioCtx.createGain();
+      gain.gain.setValueAtTime(1, audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
+      noiseFilter.connect(gain);
+      gain.connect(audioCtx.destination);
+      noise.start();
+      noise.stop(audioCtx.currentTime + 0.2);
+    }
+
+    // ----------------------------
+    // Composer Module
+    // ----------------------------
+    let composition = [];
+    const noteFreqInput = document.getElementById("noteFreq");
+    const noteDurationInput = document.getElementById("noteDuration");
+    const addNoteBtn = document.getElementById("addNote");
+    const noteTableBody = document.getElementById("noteTableBody");
+    const playCompositionBtn = document.getElementById("playComposition");
+    const saveCompositionBtn = document.getElementById("saveComposition");
+    const loadCompositionBtn = document.getElementById("loadComposition");
+    const fileInput = document.getElementById("fileInput");
+
+    addNoteBtn.addEventListener("click", () => {
+      const freq = parseFloat(noteFreqInput.value);
+      const duration = parseFloat(noteDurationInput.value);
+      if (isNaN(freq) || isNaN(duration)) return;
+      const note = { frequency: freq, duration: duration };
+      composition.push(note);
+      updateNoteTable();
+    });
+
+    function updateNoteTable() {
+      noteTableBody.innerHTML = "";
+      composition.forEach((note, index) => {
+        const row = document.createElement("tr");
+        const cellIndex = document.createElement("td");
+        cellIndex.textContent = index + 1;
+        const cellFreq = document.createElement("td");
+        cellFreq.textContent = note.frequency;
+        const cellDur = document.createElement("td");
+        cellDur.textContent = note.duration;
+        row.appendChild(cellIndex);
+        row.appendChild(cellFreq);
+        row.appendChild(cellDur);
+        noteTableBody.appendChild(row);
+      });
+    }
+
+    playCompositionBtn.addEventListener("click", () => {
+      playComposition();
+    });
+
+    function playComposition() {
+      let currentTime = audioCtx.currentTime;
+      composition.forEach(note => {
+        let osc = audioCtx.createOscillator();
+        let gain = audioCtx.createGain();
+        osc.type = "sine";
+        osc.frequency.setValueAtTime(note.frequency, currentTime);
+        gain.gain.setValueAtTime(0.2, currentTime);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start(currentTime);
+        osc.stop(currentTime + note.duration);
+        currentTime += note.duration;
+      });
+    }
+
+    saveCompositionBtn.addEventListener("click", () => {
+      const json = JSON.stringify(composition);
+      const blob = new Blob([json], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "composition.r45";
+      a.click();
+      URL.revokeObjectURL(url);
+    });
+
+    loadCompositionBtn.addEventListener("click", () => {
+      fileInput.click();
+    });
+
+    fileInput.addEventListener("change", (event) => {
+      const file = event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        try {
+          const data = JSON.parse(e.target.result);
+          if (Array.isArray(data)) {
+            composition = data;
+            updateNoteTable();
+          }
+        } catch (err) {
+          alert("Failed to load composition. Invalid file format.");
+        }
+      };
+      reader.readAsText(file);
+    });
+  </script>
+</body>
+</html>
