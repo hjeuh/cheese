@@ -1,18 +1,5 @@
 {
-  "websites": [
-    {
-      "title": "a",
-      "description": "c",
-      "category": "portfolio",
-      "thumbnailURL": "https://raw.githubusercontent.com/hjeuh/cheese/main/thumbnails/1743325165088_a.png",
-      "thumbnailPath": "thumbnails/1743325165088_a.png",
-      "htmlURL": "https://raw.githubusercontent.com/hjeuh/cheese/main/html/1743325165088_a.html",
-      "htmlPath": "html/1743325165088_a.html",
-      "dateAdded": "2025-03-30T08:59:27.046Z",
-      "views": 0,
-      "id": 1
-    }
-  ],
-  "lastId": 1,
-  "updatedAt": "2025-03-30T08:59:27.046Z"
+  "websites": [],
+  "lastId": 0,
+  "updatedAt": "2025-03-30T09:00:25.124Z"
 }
