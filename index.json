@@ -1,18 +1,5 @@
 {
-  "websites": [
-    {
-      "title": "d",
-      "description": "d",
-      "category": "other",
-      "thumbnailURL": "https://raw.githubusercontent.com/hjeuh/cheese/main/thumbnails/1743324169319_d.png",
-      "thumbnailPath": "thumbnails/1743324169319_d.png",
-      "htmlURL": "https://raw.githubusercontent.com/hjeuh/cheese/main/html/1743324169319_d.html",
-      "htmlPath": "html/1743324169319_d.html",
-      "dateAdded": "2025-03-30T08:42:51.640Z",
-      "views": 0,
-      "id": 1
-    }
-  ],
-  "lastId": 1,
-  "updatedAt": "2025-03-30T08:42:51.641Z"
+  "websites": [],
+  "lastId": 0,
+  "updatedAt": "2025-03-30T08:44:30.680Z"
 }
