@@ -1,5 +1,18 @@
 {
-  "websites": [],
-  "lastId": 0,
-  "updatedAt": "2025-03-30T17:23:20.957Z"
+  "websites": [
+    {
+      "title": "a",
+      "description": "w",
+      "category": "business",
+      "thumbnailURL": "https://raw.githubusercontent.com/hjeuh/cheese/main/thumbnails/1743355363221_a.png",
+      "thumbnailPath": "thumbnails/1743355363221_a.png",
+      "htmlURL": "https://raw.githubusercontent.com/hjeuh/cheese/main/html/1743355363221_a.html",
+      "htmlPath": "html/1743355363221_a.html",
+      "dateAdded": "2025-03-30T17:22:45.812Z",
+      "views": 1,
+      "id": 1
+    }
+  ],
+  "lastId": 1,
+  "updatedAt": "2025-03-31T15:35:59.321Z"
 }
