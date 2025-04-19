@@ -8,8 +8,17 @@
       "date": "2025-04-19T09:28:20.932Z",
       "id": 1,
       "views": 0
+    },
+    {
+      "title": "Word Replace",
+      "description": "Replace Words \n",
+      "thumbURL": "https://raw.githubusercontent.com/hjeuh/cheese/main/extensions/thumbs/1745055295147_word_replace.png",
+      "fileURL": "https://raw.githubusercontent.com/hjeuh/cheese/main/extensions/files/1745055295147_word_replace.zip",
+      "date": "2025-04-19T09:34:56.760Z",
+      "id": 2,
+      "views": 0
     }
   ],
-  "lastId": 1,
-  "updatedAt": "2025-04-19T09:28:20.933Z"
+  "lastId": 2,
+  "updatedAt": "2025-04-19T09:34:56.760Z"
 }
